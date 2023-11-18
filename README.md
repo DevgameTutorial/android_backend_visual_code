@@ -14,4 +14,3 @@ localhost:3001/api/update_registrasi_by_id/6514b2cc-b64a-4d0c-b590-9c67cc672b59
  { "nik": "1271112422424", "nama_lgkp": "RIZA SYAHPUTRA", "tpt_lhr": "JOGJA", "tgl_lhr": "2001-10-12", "no_hp": "08652525252", "peminatan_jurusan": "Teknik Informatika", "thn_lulus": "2019", "nilai_akhir": "82", "asal_sekolah": "SMAN 2", "asal_wilayah": "Bandung" } 
  
  localhost:3001/api/delete_registrasi_by_id/6514b2cc-b64a-4d0c-b590-9c67cc672b59
----

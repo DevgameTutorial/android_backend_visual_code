@@ -10,6 +10,7 @@ const path = require('path')
 const https = require('https')
 const httpolyglot = require('httpolyglot')
 app.use(bodyParser.json());
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended : true}));
 //.ENV Variable
 require('dotenv').config();
@@ -18,6 +19,7 @@ const options = {
   key: fs.readFileSync(path.join(__dirname,'.','ssl','key.pem'), 'utf-8'),
   cert: fs.readFileSync(path.join(__dirname,'.','ssl','cert.pem'), 'utf-8')
 }
+app.use('/public', express.static('public'));
 const server = httpolyglot.createServer(options, app)
 app.use('/',router);
 all_route(router);

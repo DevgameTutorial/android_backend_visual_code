@@ -1,3 +1,4 @@
+const { result } = require("lodash");
 const connection = require("../config/config");
 const { v4: uuidv4 } = require("uuid");
 //display all records
@@ -20,7 +21,7 @@ exports.get_registrasi = function (req, res) {
       arr.nilai_akhir = item.nilai_akhir;
       arr.asal_sekolah = item.asal_sekolah;
       arr.email = item.email;
-      arr.foto = item.foto;
+      arr.foto = 'http://0.0.0.0:3001/public/img/'+item.foto;
       arr.flag = item.flag;
 
       const arrGifting = arr;
@@ -62,9 +63,9 @@ exports.get_registrasi_by_id = function (req, res) {
     }
   );
 };
-//save records
-exports.insert_registrasi = function (req, res) {
+exports.insert_registrasi=(req, res) =>{
   const id = uuidv4();
+  const email = req.body.email;
   const nik = req.body.nik;
   const nama_lgkp = req.body.nama_lgkp;
   const tpt_lhr = req.body.tpt_lhr;
@@ -75,79 +76,76 @@ exports.insert_registrasi = function (req, res) {
   const nilai_akhir = req.body.nilai_akhir;
   const asal_sekolah = req.body.asal_sekolah;
   const asal_wilayah = req.body.asal_wilayah;
-  const email = req.body.email;
-  const foto = req.body.foto;
-  const flag = req.body.flag;
-
+  const foto = "user.png";
+  const flag = "Aktif";
   connection.query('select * from registrasi where email=$1', [email],function(error,cek_email){
-    if(cek_email.rows.length != 0){
-      const registrasiArray = cek_email.rows.map((item) => {
-        const arr = {};
-        arr.id = item.id;
-        arr.nik = item.nik;
-        arr.nama_lgkp = item.nama_lgkp;
-        arr.tpt_lhr = item.tpt_lhr;
-        arr.tgl_lhr = item.tgl_lhr;
-        arr.no_hp = item.no_hp;
-        arr.peminatan_jurusan = item.peminatan_jurusan;
-        arr.thn_lulus = item.thn_lulus;
-        arr.nilai_akhir = item.nilai_akhir;
-        arr.asal_sekolah = item.asal_sekolah;
-        arr.asal_wilayah = item.asal_wilayah;
-        arr.email = item.email;
-        arr.foto = item.foto;
-        arr.flag = item.flag;
-        const arrGifting = arr;
-        return arrGifting;
+  if(cek_email.rows.length != 0){
+    const emails = cek_email.rows.map((item) => {
+      const arr = {};
+      arr.id = item.id;
+      arr.nik = item.nik;
+      arr.nama_lgkp = item.nama_lgkp;
+      arr.tpt_lhr = item.tpt_lhr;
+      arr.tgl_lhr = item.tgl_lhr;
+      arr.no_hp = item.no_hp;
+      arr.peminatan_jurusan = item.peminatan_jurusan;
+      arr.thn_lulus = item.thn_lulus;
+      arr.nilai_akhir = item.nilai_akhir;
+      arr.asal_sekolah = item.asal_sekolah;
+      arr.asal_wilayah = item.asal_wilayah;
+      arr.email = item.email;
+      arr.foto = 'http://0.0.0.0:3001/public/img/'+item.foto;
+      arr.flag = item.flag;
+            const arrGifting = arr;
+            return arrGifting;
+        });
+        res.json({result:emails});
+        console.log(emails);
+        console.log('data sudah pernah ada');
+  }else{
+    const values = [
+      id,
+      nik,
+      nama_lgkp,
+      tpt_lhr,
+      tgl_lhr,
+      no_hp,
+      peminatan_jurusan,
+      thn_lulus,
+      nilai_akhir,
+      asal_sekolah,
+      asal_wilayah,
+      email,
+      foto,
+      flag
+    ];
+   connection.query('insert into registrasi  (id,nik,nama_lgkp,tpt_lhr,tgl_lhr,no_hp,peminatan_jurusan,thn_lulus,nilai_akhir,asal_sekolah,asal_wilayah,email,foto,flag) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)',values,(error,insert_email)=>{
+   if (error) {
+             throw error
+        } 
+const emails = cek_email.rows.map((item) => {
+    const arr = {};
+    arr.id = item.id;
+    arr.nik = item.nik;
+    arr.nama_lgkp = item.nama_lgkp;
+    arr.tpt_lhr = item.tpt_lhr;
+    arr.tgl_lhr = item.tgl_lhr;
+    arr.no_hp = item.no_hp;
+    arr.peminatan_jurusan = item.peminatan_jurusan;
+    arr.thn_lulus = item.thn_lulus;
+    arr.nilai_akhir = item.nilai_akhir;
+    arr.asal_sekolah = item.asal_sekolah;
+    arr.asal_wilayah = item.asal_wilayah;
+    arr.email = item.email;
+    arr.foto = 'http://0.0.0.0:3001/public/img/'+item.foto;
+    arr.flag = item.flag;
+          const arrGifting = arr;
+          return arrGifting;
       });
-      res.json({ result: registrasiArray });
-    }else{
-  const values = [
-    id,
-    nik,
-    nama_lgkp,
-    tpt_lhr,
-    tgl_lhr,
-    no_hp,
-    peminatan_jurusan,
-    thn_lulus,
-    nilai_akhir,
-    asal_sekolah,
-    asal_wilayah,
-    email,
-    foto,
-    flag
-  ];
-  connection.query(
-    "insert into registrasi  (id,nik,nama_lgkp,tpt_lhr,tgl_lhr,no_hp,peminatan_jurusan,thn_lulus,nilai_akhir,asal_sekolah,asal_wilayah,email,foto,flag) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)",
-    values,
-    (error, insert, fields) => {
-      if (error) {
-        throw error;
-      }
-      const registrasiArray = insert.rows.map((item) => {
-        const arr = {};
-        arr.id = item.id;
-        arr.nik = item.nik;
-        arr.nama_lgkp = item.nama_lgkp;
-        arr.tpt_lhr = item.tpt_lhr;
-        arr.tgl_lhr = item.tgl_lhr;
-        arr.no_hp = item.no_hp;
-        arr.peminatan_jurusan = item.peminatan_jurusan;
-        arr.thn_lulus = item.thn_lulus;
-        arr.nilai_akhir = item.nilai_akhir;
-        arr.asal_sekolah = item.asal_sekolah;
-        arr.asal_wilayah = item.asal_wilayah;
-        arr.email = item.email;
-        arr.foto = item.foto;
-        arr.flag = item.flag;
-        const arrGifting = arr;
-        return arrGifting;
-      });
-      res.json({ result: registrasiArray });
-    }
-  );
-}})}
+      res.json({result:emails});
+      console.log(emails);
+      console.log('data berhasil di tambah');
+  })}})}
 
 //update record
 exports.update_registrasi_by_id = function (req, res) {
@@ -202,7 +200,7 @@ exports.update_registrasi_by_id = function (req, res) {
         arr.asal_sekolah = item.asal_sekolah;
         arr.asal_wilayah = item.asal_wilayah;
         arr.email = item.email;
-        arr.foto = item.foto;
+        arr.foto = 'http://0.0.0.0:3001/public/img/'+item.foto;
         arr.flag = item.flag;
         const arrGifting = arr;
         return arrGifting;
@@ -235,7 +233,7 @@ exports.delete_registrasi_by_id = function (req, res) {
         arr.asal_sekolah = item.asal_sekolah;
         arr.asal_wilayah = item.asal_wilayah;
         arr.email = item.email;
-        arr.foto = item.foto;
+        arr.foto = 'http://0.0.0.0:3001/public/img/'+item.foto;
         arr.flag = item.flag;
         const arrGifting = arr;
         return arrGifting;
